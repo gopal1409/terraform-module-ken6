@@ -42,3 +42,23 @@ variable "network_interface_name" {
 variable "public_ip_address_name" {
   description   = "Name of the public ip address"
 }
+
+variable "tenant_name" {
+  type    = string
+  description = "Name of the tenant, respectivelly the organization"
+}
+
+variable "subnet_name" {
+  type    = string
+  description = "Name of the subnet"
+}
+
+variable "resource_group_location" {
+  type    = string
+  description = "Location of the resources"
+}
+
+variable "resource_group_name" {
+  type    = string
+  description = "Name of the resource group, which contains the resources"
+}
