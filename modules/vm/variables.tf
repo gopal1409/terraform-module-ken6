@@ -39,5 +39,6 @@ variable "password" {
   type = string 
 }
 variable "var.mysubnet" {
-  string
+  type = string
+  
 }
