@@ -38,7 +38,7 @@ variable "web_subnet_address" {
 variable "password" {
   type = string 
 }
-variable "var.mysubnet" {
+variable "mysubnet" {
   type = string
-  
+
 }
