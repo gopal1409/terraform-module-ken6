@@ -1,7 +1,7 @@
 resource "azurerm_windows_virtual_machine" "myvm" {
   name                  = "mytfvm"
-  location              = azurerm_resource_group.myrg.location
-  resource_group_name   = azurerm_resource_group.myrg.name
+  location              = var.resource_group_name
+  resource_group_name   = var.resource_group_location
   network_interface_ids = [azurerm_network_interface.mynic.id]
   size               = "Standard_B2as_v2"
   admin_username        = var.admin_username
@@ -22,9 +22,8 @@ resource "azurerm_windows_virtual_machine" "myvm" {
 # Security Group - allowing RDP Connection
 resource "azurerm_network_security_group" "sg-rdp-connection" {
   name                = "allowrdpconnection"
-  location            = azurerm_resource_group.myrg.location
-  resource_group_name = azurerm_resource_group.myrg.name
-
+  location            = var.resource_group_location
+  resource_group_name = var.resource_group_name
   security_rule {
     name                       = "rdpport"
     priority                   = 100
@@ -50,19 +49,19 @@ resource "azurerm_network_interface_security_group_association" "example" {
 
 resource "azurerm_public_ip" "mypip" {
   name                = "mytfpip"
-  resource_group_name = azurerm_resource_group.myrg.name
-  location            = azurerm_resource_group.myrg.location
+  resource_group_name = var.resource_group_name
+  location            = var.resource_group_location
   allocation_method   = "Static"
 } # End of the file
 
 resource "azurerm_network_interface" "mynic" {
   name                = "mytfnic"
-  location            = azurerm_resource_group.myrg.location
-  resource_group_name = azurerm_resource_group.myrg.name
+  location            = var.resource_group_name
+  resource_group_name = var.resource_group_location
 
   ip_configuration {
     name                          = "mytfipconfig"
-    subnet_id                     = azurerm_subnet.mysubnet.id
+    subnet_id                     = azurerm_subnet.web_subnet.id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.mypip.id
   }
