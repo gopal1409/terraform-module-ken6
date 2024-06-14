@@ -1,44 +1,44 @@
-#we created resource so we define resource block
-#to create varaibles the block name will be varaibles
-variable "business_devision" {
-  description = "business devision on large organization"
-  type        = string #list of string #map
+variable "my_virtual_machine_name" {
+  type        = string
+  description = "Name of the Virtual Machine"
 }
 
-variable "environment" {
-  description = "environment varaibles used as prefix"
+variable "my_virtual_machine_password" {
   type        = string
+  description = "Password of the Virtual Machine"
+}
+
+variable "my_virtual_machine_size" {
+  type        = string
+  description = "Size of the Virtual Machine"
+}
+
+variable "location" {
+  type         = string
+  description  = "Location of the resources"
 }
 
 variable "resource_group_name" {
-  type    = string
+  type          = string
+  description   = "Name of the resource group, which contains the resources"
 }
 
-variable "resource_group_location" {
-  type    = string
+variable "azurerm_subnet_id" {
+  description   = "Id of the subnet"
 }
 
-variable "vnet_name" {
-  type    = string
-  
+variable "source_image_offer" {
+  description   = "Source image offer of the virtual machine"
 }
 
-variable "vnet_address_space" {
-  type    = list(string) #it is an array format
+variable "source_image_sku" {
+  description   = "Source image offer of the virtual machine"
 }
 
-variable "web_subnet_name" {
-  type    = string
+variable "network_interface_name" {
+  description   = "Name of the network interface"
 }
 
-variable "web_subnet_address" {
-  type    = list(string)
-}
-
-variable "password" {
-  type = string 
-}
-variable "mysubnet" {
-  type = string
-
+variable "public_ip_address_name" {
+  description   = "Name of the public ip address"
 }

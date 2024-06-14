@@ -1,48 +1,65 @@
-resource "azurerm_public_ip" "mypip" {
-  name                = "mytfpip"
+resource "azurerm_availability_set" "myavailabilityset" {
+  name                = "example-aset"
+  location            = var.location
   resource_group_name = var.resource_group_name
-  location            = var.resource_group_location
-  allocation_method   = "Static"
-} # End of the file
+}
 
-resource "azurerm_network_interface" "mynic" {
-  name                = "mytfnic"
+resource "azurerm_public_ip" "my-public-ip" {
+  name                = var.public_ip_address_name
   resource_group_name = var.resource_group_name
-  location            = var.resource_group_location
+  location            = var.location
+  allocation_method   = "Dynamic"
+
+  tags = {
+    environment = "Testing"
+  }
+}
+
+resource "azurerm_network_interface" "mynetworkinterface" {
+  name                = var.network_interface_name
+  location            = var.location
+  resource_group_name = var.resource_group_name
 
   ip_configuration {
-    name                          = "mytfipconfig"
-    subnet_id                     = var.mysubnet
+    name                          = "internal"
+    subnet_id                     = var.azurerm_subnet_id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.mypip.id
+
+    public_ip_address_id = azurerm_public_ip.my-public-ip.id 
   }
-} # End of the file
-resource "azurerm_windows_virtual_machine" "myvm" {
-  name                  = "mytfvm"
-  location              = var.resource_group_location
-  resource_group_name   = var.resource_group_name
-  network_interface_ids = [azurerm_network_interface.mynic.id]
-  size               = "Standard_B2as_v2"
-  admin_username        = "azureuser"
-  admin_password        = var.password 
+}
+
+# Windows 10 Virtual Machine
+resource "azurerm_windows_virtual_machine" "myvirtualmachine" {
+  name                = var.my_virtual_machine_name
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  size                = var.my_virtual_machine_size
+  admin_username      = "adminuser"
+  admin_password      = var.my_virtual_machine_password
+  availability_set_id = azurerm_availability_set.myavailabilityset.id
+  network_interface_ids = [
+    azurerm_network_interface.mynetworkinterface.id,
+  ]
 
   os_disk {
     caching              = "ReadWrite"
     storage_account_type = "Standard_LRS"
   }
+
   source_image_reference {
-    publisher = "Microsoftwindowsdesktop"
-    offer     = "windows-11"
-    sku       = "win11-23h2-pron"
+    publisher = "MicrosoftWindowsDesktop"
+    offer     = var.source_image_offer
+    sku       = var.source_image_sku
     version   = "latest"
   }
-} # End of the file
+}
 
-# Security Group - allowing RDP Connection
+# Security Group for allowing RDP Connection
 resource "azurerm_network_security_group" "sg-rdp-connection" {
   name                = "allowrdpconnection"
-  location            = var.resource_group_name
-  resource_group_name = var.resource_group_location
+  location            = var.location
+  resource_group_name = var.resource_group_name
 
   security_rule {
     name                       = "rdpport"
@@ -51,7 +68,7 @@ resource "azurerm_network_security_group" "sg-rdp-connection" {
     access                     = "Allow"
     protocol                   = "Tcp"
     source_port_range          = "*"
-    destination_port_range     = "*"
+    destination_port_range     = "3389"
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
@@ -63,6 +80,6 @@ resource "azurerm_network_security_group" "sg-rdp-connection" {
 
 # Associate security group with network interface
 resource "azurerm_network_interface_security_group_association" "example" {
-  network_interface_id      = azurerm_network_interface.mynic.id
+  network_interface_id      = azurerm_network_interface.mynetworkinterface.id
   network_security_group_id = azurerm_network_security_group.sg-rdp-connection.id
 }
