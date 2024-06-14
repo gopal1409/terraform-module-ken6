@@ -4,8 +4,8 @@
 resource "azurerm_virtual_network" "vnet" {
   name = "${local.resource_name_prefix}-${var.vnet_name}"
   #this vnet need to be part of your resource group and resource group location
-  location            = var.resource_group_name
-  resource_group_name = var.resource_group_location
+  location            = var.resource_group_location
+  resource_group_name = var.resource_group_name
   address_space       = var.vnet_address_space
 
   tags = local.common_tags
@@ -14,7 +14,7 @@ resource "azurerm_virtual_network" "vnet" {
 resource "azurerm_subnet" "web_subnet" {
   name                 = "${local.resource_name_prefix}-${var.web_subnet_name}"
   resource_group_name  = var.resource_group_name
-  virtual_network_name = var.resource_group_location
+  virtual_network_name = var.web_subnet_name
   address_prefixes     = var.web_subnet_address
 }
 
